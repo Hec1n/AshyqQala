@@ -3,7 +3,7 @@
    Общие функции для всех страниц
 ================================= */
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = window.location.origin + "/api";
 const LS_AUTH_KEY = "ashyq_qala_auth";
 const DGIS_API_KEY = "f924e9f7-4fa9-46cf-b3fa-52df227a9834";
 const MAPGL_API_KEY = "686c5420-9671-4849-a23b-ee386e34d118";
