@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ashyq Qala - Личный кабинет</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+
+<body class="account-page">
+  <header class="header">
+    <nav class="menu-box">
+      <a class="menu-name" href="/" aria-label="Ashyq Qala">
+        <img src="/static/logo.png" alt="Ashyq Qala" width="78" />
+      </a>
+
+      <ul class="menu">
+        <li class="menu-item"><a href="/">Главная</a></li>
+        <li class="menu-item"><a href="#dashboard">Панель управления</a></li>
+        <li class="menu-item"><a href="#myIssues">Мои заявки</a></li>
+        <li class="menu-item"><a href="#statistics">Статистика</a></li>
+
+        <!-- Кнопка выхода как часть меню -->
+        <li class="menu-item menu-auth" id="authMenuItems">
+          <!-- Будет заполнено JavaScript -->
+        </li>
+      </ul>
+
+      <div class="menu-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="Сменить тему"></button>
+      </div>
+    </nav>
+
+    <div class="account-hero">
+      <div class="container">
+        <div class="account-welcome">
+          <h1>Личный кабинет</h1>
+          <p id="userGreeting">Добро пожаловать!</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <!-- Панель управления -->
+    <section class="section" id="dashboard">
+      <div class="container">
+        <div class="section-head">
+          <h1 class="section-title">Панель управления</h1>
+          <p class="section-subtitle">Управляйте своими заявками и отслеживайте их статус</p>
+        </div>
+
+        <div class="dashboard-stats">
+          <div class="stat-card stat-new">
+            <div class="stat-icon">🆕</div>
+            <div class="stat-content">
+              <h3>Новые</h3>
+              <p class="stat-count" id="statNew">0</p>
+            </div>
+          </div>
+
+          <div class="stat-card stat-work">
+            <div class="stat-icon">⚙️</div>
+            <div class="stat-content">
+              <h3>В работе</h3>
+              <p class="stat-count" id="statWork">0</p>
+            </div>
+          </div>
+
+          <div class="stat-card stat-done">
+            <div class="stat-icon">✅</div>
+            <div class="stat-content">
+              <h3>Решено</h3>
+              <p class="stat-count" id="statDone">0</p>
+            </div>
+          </div>
+
+          <div class="stat-card stat-total">
+            <div class="stat-icon">📋</div>
+            <div class="stat-content">
+              <h3>Всего</h3>
+              <p class="stat-count" id="statTotal">0</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="quick-actions">
+          <button class="btn btn-primary btn-pulse" id="btnAddIssueAccount">
+            <span class="btn-icon">+</span> Добавить проблему
+          </button>
+          <button class="btn btn-primary" id="btnRefreshIssues">
+            <span class="btn-icon">🔄</span> Обновить
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Карта в личном кабинете с поиском -->
+    <section class="section section-map" id="mapAccount">
+      <div class="container">
+        <div class="section-head row-between">
+          <div>
+            <h1 class="section-title">Карта для добавления проблем</h1>
+            <p class="section-subtitle">
+              Кликните на карту для выбора места или используйте поиск для точного выбора улицы
+            </p>
+          </div>
+
+          <div class="map-actions">
+            <button class="btn btn-primary" id="btnUseCurrentLocation">
+              <span class="btn-icon">📍</span> Моё местоположение
+            </button>
+          </div>
+        </div>
+
+        <div class="map-container">
+          <!-- Интерактивная карта 2GIS -->
+          <div id="accountMapContainer" class="account-map-canvas">
+          <div class="map-instructions-overlay">
+            <h3>Инструкция:</h3>
+            <ol>
+              <li>Кликните на карту для выбора места</li>
+              <li>Или найдите адрес в строке поиска</li>
+              <li>Или используйте "Моё местоположение"</li>
+              <li>Выбранное место отобразится справа</li>
+            </ol>
+          </div>
+        </div>
+
+          <div class="map-controls">
+            <div class="search-box">
+              <div class="search-header">
+                <strong>Поиск по улицам и адресам:</strong>
+                <small>Введите название улицы, дома или района</small>
+              </div>
+              <div class="search-input-group">
+                <input type="text" id="searchInput" placeholder="Например: ул. Кабанбай батыра, 12" class="form-input">
+                <button class="btn btn-primary" id="btnSearch">Найти</button>
+              </div>
+              <div id="searchResults" class="search-results"></div>
+            </div>
+
+            <div class="location-info-card">
+              <div class="location-info">
+                <div class="location-selected">
+                  <strong>Выбранное место:</strong>
+                  <span id="selectedAddress">Не выбрано</span>
+                </div>
+                <div class="location-details">
+                  <div class="location-coords" id="selectedCoords">
+                    Координаты: не выбраны
+                  </div>
+                  <div class="location-street" id="selectedStreet">
+                    Улица: не определена
+                  </div>
+                  <div class="location-district" id="selectedDistrict">
+                    Район: не определен
+                  </div>
+                </div>
+              </div>
+
+              <div class="location-actions">
+                <button class="btn btn-primary" id="btnCopyCoords">
+                  Копировать координаты
+                </button>
+                <button class="btn btn-primary" id="btnConfirmLocation">
+                  Подтвердить выбор
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="map-instructions">
+        <h3>Как выбрать место для заявки:</h3>
+        <ol>
+          <li>Кликните на карту 2GIS в нужном месте</li>
+          <li>Или введите адрес в строке поиска</li>
+          <li>Или нажмите кнопку "Моё местоположение"</li>
+          <li>Адрес автоматически определится через 2GIS</li>
+          <li>Подробная информация отобразится справа</li>
+          <li>Нажмите "Подтвердить выбор" для использования этого места</li>
+        </ol>
+      </div>
+      </div>
+    </section>
+
+    <!-- Форма добавления проблемы -->
+    <section class="section" id="addIssueForm">
+      <div class="container">
+        <div class="section-head">
+          <h1 class="section-title">Добавить новую проблему</h1>
+          <p class="section-subtitle">Заполните информацию о проблеме</p>
+        </div>
+
+        <div class="form-container">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="issueCategoryAccount">Категория проблемы</label>
+              <select id="issueCategoryAccount" class="form-select">
+                <option value="roads">Дороги</option>
+                <option value="light">Освещение</option>
+                <option value="trash">Мусор</option>
+                <option value="eco">Экология</option>
+                <option value="safety">Безопасность</option>
+                <option value="other">Другое</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="issuePriority">Приоритет</label>
+              <select id="issuePriority" class="form-select">
+                <option value="low">Низкий</option>
+                <option value="medium" selected>Средний</option>
+                <option value="high">Высокий</option>
+                <option value="critical">Критический</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="issueDescriptionAccount">Описание проблемы</label>
+            <textarea
+              id="issueDescriptionAccount"
+              class="form-textarea"
+              rows="4"
+              placeholder="Подробно опишите проблему..."
+            ></textarea>
+            <small class="hint">Опишите проблему максимально подробно: размер, опасность, дополнительные детали</small>
+          </div>
+
+          <div class="form-group">
+            <label>Выбранное местоположение</label>
+            <div class="location-preview" id="locationPreview">
+              <div class="location-text">
+                <span id="previewAddress">Место не выбрано</span>
+                <small id="previewCoords"></small>
+                <div id="previewDetails">
+                  <small id="previewStreet"></small>
+                  <small id="previewDistrict"></small>
+                </div>
+              </div>
+              <button class="btn btn-primary" id="btnChangeLocation">
+                Изменить
+              </button>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn btn-primary" id="btnCancelIssue">Отмена</button>
+            <button class="btn btn-primary btn-pulse" id="btnSubmitIssue" disabled>
+              Добавить проблему
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Мои заявки -->
+    <section class="section" id="myIssues">
+      <div class="container">
+        <div class="section-head row-between">
+          <div>
+            <h1 class="section-title">Мои заявки</h1>
+            <p class="section-subtitle">История всех ваших обращений</p>
+          </div>
+
+          <div class="filter-controls">
+            <select id="filterMyIssues" class="form-select">
+              <option value="all">Все заявки</option>
+              <option value="new">Только новые</option>
+              <option value="work">В работе</option>
+              <option value="done">Решённые</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="issues-container">
+          <div class="issues-list" id="myIssuesList">
+            <!-- Заявки будут загружены через JavaScript -->
+            <div class="loading-spinner" id="issuesLoading">
+              <div class="spinner"></div>
+              <p>Загрузка ваших заявок...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Статистика -->
+    <section class="section" id="statistics">
+      <div class="container">
+        <div class="section-head">
+          <h1 class="section-title">Статистика активности</h1>
+          <p class="section-subtitle">Ваш вклад в улучшение города</p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stats-card">
+            <h3>📈 Ваша активность по месяцам</h3>
+            <div class="chart-container">
+              <canvas id="activityChart"></canvas>
+            </div>
+          </div>
+
+          <div class="stats-card">
+            <h3>🏆 Топ ваших категорий</h3>
+            <div class="top-categories" id="topCategories">
+              <!-- Будет заполнено через JavaScript -->
+              <div class="category-item">
+                <span class="category-name">Нет данных</span>
+                <span class="category-count">0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-stats" style="margin-top: 30px;">
+          <div class="stat-card">
+            <div class="stat-icon">📅</div>
+            <div class="stat-content">
+              <h3>Заявок за месяц</h3>
+              <p class="stat-count" id="monthCount">0</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">📊</div>
+            <div class="stat-content">
+              <h3>Средний приоритет</h3>
+              <p class="stat-count" id="avgPriority">-</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">⏱️</div>
+            <div class="stat-content">
+              <h3>Среднее время решения</h3>
+              <p class="stat-count" id="avgTime">-</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">🏅</div>
+            <div class="stat-content">
+              <h3>Ваш рейтинг</h3>
+              <p class="stat-count" id="userRank">#1</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <!-- Левая часть -->
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <img src="/static/aqlogo.png" alt="aqlogo">
+          <span class="logo-text">Ashyq Qala</span>
+        </div>
+        <p class="footer-desc">
+          Платформа коллективного решения городских проблем на основе данных
+        </p>
+      </div>
+
+      <!-- Навигация -->
+      <div class="footer-nav">
+        <h4>Навигация</h4>
+        <ul>
+          <li><a href="/">Главная</a></li>
+          <li><a href="#dashboard">Личный кабинет</a></li>
+          <li><a href="#myIssues">Мои заявки</a></li>
+        </ul>
+      </div>
+
+      <!-- Поддержка -->
+      <div class="footer-nav">
+        <h4>Поддержка</h4>
+        <ul>
+          <li><a href="#statistics">Статистика</a></li>
+          <li><a href="#contacts">Контакты</a></li>
+        </ul>
+      </div>
+
+      <!-- Контакты -->
+      <div class="footer-contacts">
+        <h4>Контакты</h4>
+        <p>Телефон: +7 (7172) 123-45-67</p>
+        <p>Email: flagmanftlschool@gmail.com</p>
+        <p>Город: Астана</p>
+      </div>
+
+      <div class="footer-socials">
+        <div class="mnogosoc">
+          <a href="https://instagram.com/" target="_blank" rel="noopener" class="social-link">
+            <img src="/static/insta.logo.png" alt="Instagram" width="35px">
+            <span>Instagram</span>
+          </a>
+
+          <a href="https://t.me/" target="_blank" rel="noopener" class="social-link">
+            <img src="/static/telega.logo.png" alt="Telegram" width="35px">
+            <span>Telegram</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Нижняя линия -->
+      <div class="footer-bottom">
+        © 2026 Ashyq Qala. Все права защищены.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Скрипты -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="/static/common.js"></script>
+  <script src="/static/account.js"></script>
+  <script>
+      // Инициализация EmailJS
+    (function() {
+      if (typeof emailjs !== 'undefined') {
+        emailjs.init('tLDWRoFZ2oPAeB1Fv'); // Публичный ключ
+        console.log('✅ EmailJS инициализирован для личного кабинета');
+      }
+    })();
+    document.addEventListener('DOMContentLoaded', function() {
+      if (typeof initAccountPage === 'function') {
+        setTimeout(initAccountPage, 100);
+      }
+    });
+  </script>
+</body>
+</html>
